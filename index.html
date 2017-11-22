@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	账号：<input type="text" id="user"><br>
+	密码：<input type="text" id="pass"><br>
+	<button id="but">登录</button>
+	<div id="div"></div>
+</body>
+</html>
+<script>
+but.onclick=function(){
+	ajax({
+		url:'http://localhost:8888',
+		type:'post',
+		data:{
+			user:user.value,
+			pass:pass.value
+		},
+		success:function(data){
+			console.log(data)
+			var data=JSON.parse(data)
+			console.log(data)
+			var str='';
+			for(i in data){
+				str+="<div>账号:<span>"+data[i].user+"</sapn>密码:<span>"+data[i].pass+"</span></div>"
+			}
+			div.innerHTML=str;
+		}
+	})
+}
+function ajax(option){
+	var xhr= new XMLHttpRequest();
+var arr=[]
+for(var i in option.data){
+	arr.push(i+'='+option.data[i])
+}
+var str='';
+str=arr.join('&')
+if(option.type=='get'){
+	xhr.open('get',option.url+'?'+str,true);
+	xhr.send()
+}else 
+if(option.type=='post'){
+	xhr.open('post',option.url,true);
+	xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	xhr.send(str)
+}
+	xhr.onreadystatechange =function(){
+		if(xhr.readyState == 4){
+			if(xhr.status>=200 && xhr.status <300 || xhr.status == 304){
+				option.success(xhr.responseText)
+			}else{
+				console.log('服务器错误')
+			}
+		}
+	}
+}
+
+</script>
